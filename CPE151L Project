@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <signal.h>
+#include <pthread.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+
+void *kidfunc(void*p){}
+
+int main() {
+    int d, pipefds[2], p, x=0, y=0;
+    char g[100], readmessage[20], writemessages[2][20]={""};
+    p = pipe(pipefds);
+
+    printf("Music Recommendation\nGenre (Rap or Rock): ");
+    scanf("&s", g);
+    printf("Decade(2000 or 2010): ");
+    scanf("%d", &d);
+
+    if (p == -1) {
+        printf("\nSending to Pipe: Genre & Decade\n");
+        write(pipefds[1], writemessages[0], sizeof(writemessages[0]));
+
+        char *thread[4] = {"A", "B", "C", "D"};
+        do
+        {
+            printf("\nCreating Thread: %s\n", thread[x]);
+        } while (x<4);
+        
+        pthread_t kid;
+        pthread_create(&kid, NULL, kidfunc, NULL);
+        pthread_join(kid, NULL);
+
+        read(pipefds[0], readmessage, sizeof(readmessage));
+        printf("\nReceived from Pipe: Genre is %s & Decade is %d\n", g, d);
+
+        if (strcmp(g, "Rap") == 0 && d == 2000) {
+            printf("\n2000's Rap Album: \n");
+            system("/home/jmbinamira/recs1.sh");
+        }
+
+        else if (strcmp(g, "Rap") == 0 && d == 2010) {
+            printf("\n2010's Rap Album:\n");
+            system("/home/jmbinamira/recs2.sh");
+        }
+
+        else if (strcmp(g, "Rock") == 0 && d = 2000) {
+            printf("\n2000's Rock ALbum: \n");
+            system("/home/jmbinamira/recs3.sh");
+        }
+
+        else {
+            printf("\n2010's Rock ALbum: \n");
+            system("/home/jmbinamira/recs4.sh");
+        }
+    }
+
+    return 0;
+}
